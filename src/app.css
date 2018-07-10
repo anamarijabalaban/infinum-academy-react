@@ -1,0 +1,21 @@
+.showTitle{
+  font-size: 20px;
+  padding: 10px;
+  border-bottom: 1px solid;
+}
+
+.showTitle:hover{
+  border-bottom: 4px solid;
+}
+
+.alignCenter{
+  text-align: center;
+}
+
+#showList{
+  list-style-type: none;
+}
+
+#showsDiv{
+  margin: 0 400px;
+}
