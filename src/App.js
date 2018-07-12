@@ -18,11 +18,11 @@ export default class App extends Component {
     const showNames = this.state.shows.map((show) => show.title);
 
     return (
-      <div id='showsDiv'>
-        <h2 class='alignCenter'>TV shows</h2>
-        <ul id='showList'>
+      <div className='showsDiv'>
+        <h2 className='alignCenter'>TV shows</h2>
+        <ul className='showList'>
         {
-          this.state.shows.map((show) => <li class='showTitle'>{show.title}</li>)
+          this.state.shows.map((show) => <li className='showTitle'>{show.title}</li>)
         }
         </ul>
       </div>

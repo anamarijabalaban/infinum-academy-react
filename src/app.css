@@ -12,10 +12,10 @@
   text-align: center;
 }
 
-#showList{
+.showList{
   list-style-type: none;
 }
 
-#showsDiv{
+.showsDiv{
   margin: 0 400px;
 }
