@@ -1,21 +1,26 @@
-.showTitle{
+.show-title{
   font-size: 20px;
   padding: 10px;
   border-bottom: 1px solid;
 }
 
-.showTitle:hover{
+.show-title:hover{
   border-bottom: 4px solid;
 }
 
-.alignCenter{
+.align-center{
   text-align: center;
 }
 
-.showList{
+.show-list{
   list-style-type: none;
 }
 
-.showsDiv{
+.shows-div{
   margin: 0 400px;
+}
+
+.show-link{
+  text-decoration: none;
+  display: block;
 }
