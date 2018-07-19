@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
-import {ShowComponent} from './ShowComponent'
-import {EpisodeComponent} from './EpisodeComponent'
-import styles from './app.css';
+import {EpisodeComponent} from './components/EpisodeComponent'
+import { css } from 'emotion';
+
+const showsDiv = css`
+  margin: 0 400px;
+`;
+
+const alignCenter = css`
+  text-align: center;
+`;
 
 export class ShowDetailsContainer extends Component {
   constructor (args){
@@ -23,22 +30,15 @@ export class ShowDetailsContainer extends Component {
       .then((response) => this.setState({episodes: response.data}));
   }
 
-
-
-
-
   render(){
-    const { showId } = this.props.match.params;
     return (
-      <div className='shows-div'>
-
-        <ul className='episode-list'>
-        <h3 className='align-center'>{this.state.show.title}</h3>
+      <div className={showsDiv}>
+        <ul>
+        <h3 className={alignCenter}>{this.state.show.title}</h3>
         {
-          this.state.episodes.length === 0
-            ? 'No episodes'
-            : this.state.episodes.map((episode) => <EpisodeComponent episode={episode}/>)
-
+          this.state.episodes.length
+            ? this.state.episodes.map((episode) => <EpisodeComponent episode={episode}/>)
+            : 'No episodes'
         }
         </ul>
       </div>
