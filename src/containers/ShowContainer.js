@@ -1,8 +1,11 @@
 import React, { Component} from 'react';
-import {ShowComponent} from './components/ShowComponent'
+import {ShowComponent} from '../components/ShowComponent'
+import { observer } from 'mobx-react';
 import { css } from 'emotion';
-import {Footer} from './components/Footer'
-import {Header} from './components/Header'
+import {Footer} from '../components/Footer';
+import {Header} from '../components/Header';
+import state from '../state';
+import { getAll as getAllShows } from '../services/show';
 
 
 const container2 = css`
@@ -24,19 +27,11 @@ const titleBox = css`
   padding: 0 20px;
 `;
 
+@observer
 export class ShowContainer extends Component {
-  constructor (args){
-    super(args);
-
-    this.state ={
-      shows: []
-    }
-  }
 
   componentDidMount(){
-    fetch('https://api.infinum.academy/api/shows')
-      .then((data) => data.json())
-      .then((response) => this.setState({shows: response.data}));
+    getAllShows(state)
   }
 
   render(){
@@ -47,7 +42,7 @@ export class ShowContainer extends Component {
           <h3 className={titleBox}>All shows</h3>
           <ul>
           {
-            this.state.shows.map((show) => <ShowComponent show={show}/>)
+            state.shows.map((show) => <ShowComponent show={show}/>)
           }
           </ul>
         </div>

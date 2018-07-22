@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
 import {css} from 'emotion';
 import {Redirect}  from 'react-router-dom';
+import getImage from '../imagesImports';
+import {register} from '../services/user'
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+
 
 const container = css`
   font-family: Arial, Helvetica, sans-serif;
@@ -70,14 +75,16 @@ const loginBtnBox= css`
   border-radius: 8px;
 `;
 
+@observer
 export class RegisterContainer extends Component {
+  @observable
+  componentState = {
+    username: '',
+    password: '',
+    redirect: false
+  }
   constructor(props) {
     super(props);
-    this.state = {
-      username: '',
-      password: '',
-      redirect: false
-    };
     this._handleUsernameChange = this._handleUsernameChange.bind(this);
     this._handlePasswordChange = this._handlePasswordChange.bind(this);
 
@@ -92,39 +99,33 @@ export class RegisterContainer extends Component {
     this.setState({password: event.target.value});
   }
   _register() {
-    fetch('https://api.infinum.academy/api/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: this.state.username,
-        password: this.state.password
+    register(
+      this.componentState,
+      JSON.stringify({
+        email: this.componentState.username,
+        password: this.componentState.password
       })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({ redirect: true });
-      })
-      .catch((error) => console.log(error));
-
+    )
+    .then((data) => {
+      this.setState({ redirect: true });
+    });
   }
-  render() {
-    const { redirect } = this.state;
 
-     if (redirect) {
+  render() {
+
+     if (this.componentState.redirect) {
        return <Redirect to='/login'/>;
      }
     return (
       <div className={container}>
         <div className={iconBox}>
-          <img className={iconImg} alt='App icon' src={require('../src/images/img-logo-horizontal@3x.png')} />
+          <img className={iconImg} alt='App icon' src={getImage('logo')} />
         </div>
         <div className={blankBox}></div>
         <label className={usernameLabBox} htmlFor="username">Username:</label>
-        <input className={usernameBox} type="text" id="username" value={this.state.username} onChange={this._handleUsernameChange}/>
+        <input className={usernameBox} type="text" id="username" value={this.componentState.username} onChange={this._handleUsernameChange}/>
         <label className={passwordLabBox} htmlFor="password">Password:</label>
-        <input className={passwordBox} type="password" id="password" value={this.state.password} onChange={this._handlePasswordChange}/>
+        <input className={passwordBox} type="password" id="password" value={this.componentState.password} onChange={this._handlePasswordChange}/>
 
         <button className={loginBtnBox} onClick={this._register}>REGISTER</button>
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { css } from 'emotion';
 import {Link}  from 'react-router-dom';
+import getImage from '../imagesImports';
 
 const footerBox = css`
   display: grid;
@@ -82,7 +83,7 @@ export class Footer extends Component {
     return (
       <div className={footerBox}>
         <div className={iconBox}>
-          <img className={iconImg} alt='App logo' src={require('../../src/images/img-logo-horizontal@3x.png')} />
+          <img className={iconImg} alt='App logo' src={getImage('logo')} />
         </div>
         <div className={infoLinksBox}>
           <Link className={infoLinkLabel1} to={`/shows`}>About Us</Link>
@@ -91,9 +92,9 @@ export class Footer extends Component {
         </div>
         <div className={infoBox}>&#169; Shows. All right reserved. Additional terms and conditions may apply.</div>
         <div className={snLinksBox}>
-          <img className={snIconImg} alt='Facebook link' src={require('../../src/images/ic-facebook@3x.png')} />
-          <img className={snIconImg} alt='LinkedIn link' src={require('../../src/images/ic-linkedin@3x.png')} />
-          <img className={snIconImg} alt='Twitter link' src={require('../../src/images/ic-twitter@3x.png')} />
+          <img className={snIconImg} alt='Facebook link' src={getImage('facebook')} />
+          <img className={snIconImg} alt='LinkedIn link' src={getImage('linkedin')} />
+          <img className={snIconImg} alt='Twitter link' src={getImage('twitter')} />
         </div>
       </div>
     );

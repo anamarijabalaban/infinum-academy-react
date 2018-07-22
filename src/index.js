@@ -3,10 +3,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Route} from 'react-router'
 import {BrowserRouter, Redirect} from 'react-router-dom'
-import {ShowContainer} from './ShowContainer';
-import {ShowDetailsContainer} from './ShowDetailsContainer';
-import {LoginContainer} from './LoginContainer';
-import {RegisterContainer} from './RegisterContainer';
+import {ShowContainer} from './containers/ShowContainer';
+import {ShowDetailsContainer} from './containers/ShowDetailsContainer';
+import {LoginContainer} from './containers/LoginContainer';
+import {RegisterContainer} from './containers/RegisterContainer';
 
 ReactDOM.render((
   <BrowserRouter>

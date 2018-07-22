@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import {css} from 'emotion';
 import {Link, Redirect}  from 'react-router-dom';
+import getImage from '../imagesImports';
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+import {login} from '../services/user'
 
 const container = css`
   font-family: Arial, Helvetica, sans-serif;
@@ -96,15 +100,19 @@ const eyeImg= css`
   width: 15%;
 `;
 
+
+@observer
 export class LoginContainer extends Component {
+  @observable
+  componentState = {
+    username: '',
+    password: '',
+    redirect: false,
+    remember: false,
+    inputType: 'password'
+  }
   constructor(props) {
     super(props);
-    this.state = {
-      username: '',
-      password: '',
-      redirect: false,
-      remember: false
-    };
     this._handleUsernameChange = this._handleUsernameChange.bind(this);
     this._handlePasswordChange = this._handlePasswordChange.bind(this);
     this._handleInputChange = this._handleInputChange.bind(this);
@@ -115,65 +123,50 @@ export class LoginContainer extends Component {
   }
 
   _handleMouseOverEye(event){
-    let passInput = document.getElementById('password');
-    passInput.type = 'text';
+    this.componentState.inputType = 'text';
   }
 
   _handleMouseOutEye(event){
-    let passInput = document.getElementById('password');
-    passInput.type = 'password';
+    this.componentState.inputType = 'password';
   }
 
   _handleUsernameChange(event) {
-    this.setState({username: event.target.value});
+    this.componentState.username = event.target.value;
   }
 
   _handleInputChange(event) {
-    this.setState({remember: event.target.checked});
+    this.componentState.remember = event.target.value;
   }
 
   _handlePasswordChange(event) {
-    this.setState({password: event.target.value});
+    this.componentState.password = event.target.value;
   }
   _login() {
-    fetch('https://api.infinum.academy/api/users/sessions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: this.state.username,
-        password: this.state.password
+    login(
+      this.componentState,
+      JSON.stringify({
+        email: this.componentState.username,
+        password: this.componentState.password
       })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('name', this.state.username.split('@')[0]);
-        localStorage.setItem('remember', this.state.remember);
-        this.setState({ redirect: true });
-      })
-      .catch((error) => console.log(error));
+    );
 
   }
   render() {
-    const { redirect } = this.state;
-
-     if (redirect) {
+     if (this.componentState.redirect) {
        return <Redirect to='/shows'/>;
      }
     return (
       <div className={container}>
         <div className={iconBox}>
-          <img className={iconImg} alt='App icon' src={require('../src/images/img-logo-horizontal@3x.png')} />
+          <img className={iconImg} alt='App icon' src={getImage('logo')} />
         </div>
         <div className={blankBox}></div>
         <label className={usernameLabBox} htmlFor="username">My username is:</label>
-        <input className={usernameBox} type="text" id="username" value={this.state.username} onChange={this._handleUsernameChange}/>
+        <input className={usernameBox} type="text" id="username" value={this.componentState.username} onChange={this._handleUsernameChange}/>
         <label className={passwordLabBox} htmlFor="password">and my password is:</label>
-        <input className={passwordBox} type="password" id="password" value={this.state.password} onChange={this._handlePasswordChange}/>
+        <input className={passwordBox} type={this.componentState.inputType} id="password" value={this.componentState.password} onChange={this._handlePasswordChange}/>
         <span className={eyeBox}>
-          <img className={eyeImg} alt='Show password text' src={require('../src/images/ic-akcije-show-password-red@3x.png')} onMouseOver={this._handleMouseOverEye} onMouseOut={this._handleMouseOutEye}/>
+          <img className={eyeImg} alt='Show password text' src={getImage('passEye')} onMouseOver={this._handleMouseOverEye} onMouseOut={this._handleMouseOutEye}/>
         </span>
         <div className={rememberBox}>
             <input name="remember" type="checkbox" onChange={this._handleInputChange} />Remember me

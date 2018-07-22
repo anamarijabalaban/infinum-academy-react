@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { css } from 'emotion';
+import getImage from '../imagesImports';
 
 const headerBox = css`
   display: grid;
   grid-template-columns:  1fr 1fr 1fr 1fr;
-  grid-auto-rows: 40px;
   grid-gap: 5px 20px;
   padding: 10px 150px;
-  grid-row: 1 / 3;
   grid-column: 1 / 5;
 `;
 
@@ -34,7 +33,7 @@ export class Header extends Component {
     return (
       <div className={headerBox}>
         <div className={iconBox}>
-          <img className={iconImg} alt='App logo' src={require('../../src/images/img-logo-horizontal@3x.png')} />
+          <img className={iconImg} alt='App logo' src={getImage('logo')} />
         </div>
         <div className={hiBox}>Hi, {user}</div>
 
