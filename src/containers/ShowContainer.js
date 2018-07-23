@@ -5,8 +5,8 @@ import { css } from 'emotion';
 import {Footer} from '../components/Footer';
 import {Header} from '../components/Header';
 import state from '../state';
-import { getAll as getAllShows } from '../services/show';
-
+import { getAll as getAllShows,getAllFavorites } from '../services/show';
+import { observable } from 'mobx';
 
 const container2 = css`
   display: grid;
@@ -29,16 +29,40 @@ const titleBox = css`
 
 @observer
 export class ShowContainer extends Component {
-
+  @observable
+  componentState = {
+    favorites: []
+  }
+  constructor(props) {
+    super(props);
+  }
   componentDidMount(){
-    getAllShows(state)
+    getAllShows(state);
+    if (localStorage.getItem('favorites')){
+      getAllFavorites(this.componentState,localStorage.getItem('favorites').trim().split(' ') );
+    }
+
   }
 
   render(){
+    const favoritesStr=localStorage.getItem('favorites');
+    const list = favoritesStr ? favoritesStr.trim().split(' '): [];
     return (
       <div className={container2}>
         <Header/>
         <div className={contentBox}>
+        {
+          favoritesStr ?
+            <h3 className={titleBox}>My favorites</h3>
+          :''  
+
+        }
+
+          <ul>
+          {
+              this.componentState.favorites.map((show) => <ShowComponent show={show}/>)
+          }
+          </ul>
           <h3 className={titleBox}>All shows</h3>
           <ul>
           {

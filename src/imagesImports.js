@@ -14,6 +14,9 @@ import ThumbDown from './images/thumbs-down.png'
 import ThumbUpB from './images/thumbs-up-black.png'
 import ThumbDownB from './images/thumbs-down-black.png'
 import Episode from './images/episode.jpg'
+import Plus from './images/plus.png'
+import GoBack from './images/go-back.png'
+import Heart from './images/heart.png'
 
 const imgs = {
     'Star Trek: Voyager': StarTrek,
@@ -31,9 +34,12 @@ const imgs = {
     'thumbDown': ThumbDown,
     'thumbUpB': ThumbUpB,
     'thumbDownB': ThumbDownB,
-    'episode': Episode
+    'episode': Episode,
+    'plus': Plus,
+    'goBack': GoBack,
+    'heart': Heart
 };
-console.log(imgs);
+
 const getImage = (key) => imgs[key];
 
 export default getImage;

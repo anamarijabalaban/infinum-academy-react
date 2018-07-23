@@ -9,6 +9,7 @@ import {getById, getAllEpisodesByShowId} from '../services/show';
 import getImage from '../imagesImports';
 import {VoteComponent} from '../components/VoteComponent';
 import {Link}  from 'react-router-dom';
+import { observable } from 'mobx';
 
 
 const showsDiv = css`
@@ -31,7 +32,8 @@ const contentBox = css`
   background-color: #F8F8F8;
   display:grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 30px;
+  grid-column-gap: 30px;
+  grid-row-gap: 10px;
 
 `;
 
@@ -69,6 +71,7 @@ const showTitle = css`
   font-weight: bold;
   font-size: 20px;
   display:inline-block;
+  margin: 5px;
 `;
 
 const titleRowBox=css`
@@ -77,15 +80,101 @@ const titleRowBox=css`
   grid-column-gap: 20px;
 `;
 
-const votesBox=css`
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
+const topImageBox=css`
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-column-gap: 10px;
 
+`;
+
+const plusBox=css`
+  grid-column: 1/2;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  border: 1px solid #A0A0A0;
+  border-radius: 20px;
+  padding: 3px;
+  text-decoration: none;
+`;
+
+const heartBox=css`
+  grid-column: 2/2;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  border: 1px solid #A0A0A0;
+  border-radius: 20px;
+  padding: 3px;
+  text-decoration: none;
+`;
+
+const plusImg=css`
+  width: 25px;
+  padding-right: 2px;
+`;
+
+const heartImg=css`
+  width: 25px;
+  padding-right: 2px;
+`;
+
+const goBackImg=css`
+
+`;
+
+const showLink=css`
+`;
+
+const imgShowDiv=css`
+  padding-top: 1em;
+`;
+
+const showImg=css`
+  width: 100%;
+  padding-bottom: 10px;
+border-bottom: 1px solid #A0A0A0;
+`;
+
+const transparentHeartBox=css`
+  grid-column: 2/2;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  border: 1px solid #A0A0A0;
+  border-radius: 20px;
+  padding: 3px;
+  text-decoration: none;
+  background-color: #d0a9a9;
 `;
 
 @observer
 export class ShowDetailsContainer extends Component {
+  @observable
+  componentState = {
+    favorite: false
+  }
+  constructor(props) {
+    super(props);
+    this._setFavorite = this._setFavorite.bind(this);
+  }
+
+  _setFavorite(event){
+    let favorites = localStorage.getItem('favorites');
+    if (!favorites){
+      localStorage.setItem('favorites', `${state.show._id} `);
+    }else{
+      console.log('list1:',favorites);
+      if (favorites.includes(`${state.show._id}`)){
+        favorites=favorites.replace(new RegExp(`${state.show._id}`, 'g'), '');
+        localStorage.setItem('favorites', `${favorites.trim()}`);
+      }else{
+        localStorage.setItem('favorites', `${favorites.trim()} ${state.show._id}`);
+      }
+    }
+    this.componentState.favorite = !this.componentState.favorite;
+
+  }
 
   componentDidMount(){
     const { showId } = this.props.match.params;
@@ -103,7 +192,11 @@ export class ShowDetailsContainer extends Component {
       <div className={container2}>
         <Header/>
         <div className={contentBox}>
-          <div className={backBox}>lala</div>
+          <div className={backBox}>
+            <Link className={showLink} to={`/shows`}>
+              <img calssName={goBackImg} alt='Go back' src={getImage('goBack')} />
+            </Link>
+          </div>
           <div className={descBox}>
             <div className={titleRowBox}>
               <p className={showTitle}>{state.show.title}</p>
@@ -118,26 +211,31 @@ export class ShowDetailsContainer extends Component {
               ? state.episodes.map((episode) => <EpisodeComponent episode={episode}/>)
               : 'No episodes'
           }
-          {
-            state.episodes.length
-              ? state.episodes.map((episode) => <EpisodeComponent episode={episode}/>)
-              : 'No episodes'
-          }
           </div>
           <div className={imgBox}>
-            <span> Add episode </span>
-            <span> Favorite </span>
-            <div>
-            <img alt={`${state.show.title}`} src={image} />
-            <div>
-            <Link to=''>Official Website</Link>
+            <div className={topImageBox}>
+              <Link className = {plusBox} to=''>
+                <img className={plusImg} alt='New episode' src={getImage('plus')} />
+                <div>New episode</div>
+              </Link>
+              <button className = {this.componentState.favorite ? transparentHeartBox: heartBox} onClick={this._setFavorite} disable='true' >
+
+                  <img className={heartImg} alt='Favorite' src={getImage('heart')} />
+                  <div>Favorite</div>
+
+              </button>
             </div>
-            <div>
-            <Link to=''>Wikipedia</Link>
-            </div>
-            <div>
-            <Link to=''>IMDB</Link>
-            </div>
+            <div className={imgShowDiv}>
+              <img className={showImg} alt={`${state.show.title}`} src={image} />
+              <div>
+                <Link to=''>Official Website</Link>
+              </div>
+              <div>
+                <Link to=''>Wikipedia</Link>
+              </div>
+              <div>
+                <Link to=''>IMDB</Link>
+              </div>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ import {like, dislike} from '../services/show';
 import state from '../state';
 
 const likeShowBox=css`
-  border: 1px solid black;
+  border: 1px solid #A0A0A0;
   border-radius: 15px;
   align-items: center;
   display: inline-flex;

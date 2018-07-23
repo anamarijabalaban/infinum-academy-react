@@ -14,6 +14,10 @@ export function getAllEpisodesByShowId(state, id) {
     .then((response) => state.episodes.replace(response));
 }
 
+export function getAllFavorites(state, list){
+  list.map((id)=>get(`shows/${id}`).then((response) => state.favorites.push(response)));
+}
+
 export function like(state, id) {
   console.log('like');
   post(`shows/${id}/like`, '');
