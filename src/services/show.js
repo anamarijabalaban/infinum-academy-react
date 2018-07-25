@@ -1,28 +1,42 @@
 import { get, post } from './api';
+import { runInAction } from 'mobx';
 
-export function getAll(state) {
-  get('shows')
-    .then((response) => state.shows.replace(response));
+export async function getAll(state) {
+  const shows = await get('shows');
+  runInAction(() => {
+    state.shows.replace(shows);
+  });
 }
 
-export function getById(state, id) {
-  get(`shows/${id}`)
-    .then((response) => state.show = response);
-}
-export function getAllEpisodesByShowId(state, id) {
-  get(`shows/${id}/episodes`)
-    .then((response) => state.episodes.replace(response));
+export async function getById(state, id) {
+  const show = await get(`shows/${id}`)
+  runInAction(() => {
+    state.show = show;
+  });
 }
 
-export function getAllFavorites(state, list){
-  list.map((id)=>get(`shows/${id}`).then((response) => state.favorites.push(response)));
+export async function getAllEpisodesByShowId(state, id) {
+  const episodes = await get(`shows/${id}/episodes`);
+  runInAction(() => {
+    state.episodes.replace(episodes);
+  });
+}
+
+export async function getAllFavorites(state, list){
+  list.map( async (id)=>{
+    const show = await get(`shows/${id}`);
+    runInAction(() =>{
+      state.favorites.push(show);
+    });
+  });
 }
 
 export function like(state, id) {
-  console.log('like');
   post(`shows/${id}/like`, '');
+
 }
 
 export function dislike(state, id) {
   post(`shows/${id}/dislike`, '');
+
 }

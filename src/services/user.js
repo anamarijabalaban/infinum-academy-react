@@ -1,19 +1,26 @@
 import { post } from './api';
+import { runInAction } from 'mobx';
 
-export function register(state, data) {
-  post('users', data)
-  .then((response) => {
+export async function register(state, data) {
+  const response = await post('users', data);
+  runInAction(() => {
+    state.redirect = true;
+  });
+}
+
+
+export async function login(state, data) {
+  try{
+    const response = await post('users/sessions', data).catch((err) => { console.log(err); });;
+    console.log(response);
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('name', state.username.split('@')[0]);
     localStorage.setItem('remember', state.remember);
-    state.redirect = true;
-  })
-  .catch((error) => console.log(error));
-}
-
-export function login(state, data) {
-  post('users/sessions', data)
-  .then((data) => {
+  } catch(err){
+    alert(err);
+  }
+  console.log(localStorage);
+  runInAction(() => {
     state.redirect= true;
   });
 }

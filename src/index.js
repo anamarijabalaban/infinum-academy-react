@@ -7,7 +7,10 @@ import {ShowContainer} from './containers/ShowContainer';
 import {ShowDetailsContainer} from './containers/ShowDetailsContainer';
 import {LoginContainer} from './containers/LoginContainer';
 import {RegisterContainer} from './containers/RegisterContainer';
+import {EpisodeDetailsContainer} from './containers/EpisodeDetailsContainer';
+import { configure } from 'mobx';
 
+configure({ enforceActions: true });
 ReactDOM.render((
   <BrowserRouter>
   <div>
@@ -20,6 +23,7 @@ ReactDOM.render((
     )}/>
     <Route exact path="/shows" component={ShowContainer}/>
     <Route path="/shows/:showId" component={ShowDetailsContainer} />
+    <Route path="/episodes/:episodeId" component={EpisodeDetailsContainer} />
     <Route exact path="/login" component={LoginContainer} />
     <Route exact path="/register" component={RegisterContainer} />
     </div>

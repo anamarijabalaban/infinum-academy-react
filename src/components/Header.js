@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { css } from 'emotion';
 import getImage from '../imagesImports';
+import state from '../state';
+import { action } from 'mobx';
+import {Link}  from 'react-router-dom';
+
 
 const headerBox = css`
   display: grid;
@@ -27,15 +31,28 @@ const hiBox = css`
   padding: 10px;
   color: #FF7590;
 `;
+
 export class Header extends Component {
+  @action.bound
+  _logout(){
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('name');
+    localStorage.removeItem('remember');
+    console.log(localStorage);
+  }
   render() {
-    const user = localStorage.getItem('name');
+
+
     return (
       <div className={headerBox}>
         <div className={iconBox}>
           <img className={iconImg} alt='App logo' src={getImage('logo')} />
         </div>
-        <div className={hiBox}>Hi, {user}</div>
+        <div className={hiBox}>
+          <Link to={`/login`} onClick={this._logout}>Logout</Link>
+          <span> Hi, {state.currentUser}</span>
+        </div>
 
       </div>
     );

@@ -3,7 +3,7 @@ import {css} from 'emotion';
 import {Redirect}  from 'react-router-dom';
 import getImage from '../imagesImports';
 import {register} from '../services/user'
-import { observable } from 'mobx';
+import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
 
 
@@ -83,21 +83,18 @@ export class RegisterContainer extends Component {
     password: '',
     redirect: false
   }
-  constructor(props) {
-    super(props);
-    this._handleUsernameChange = this._handleUsernameChange.bind(this);
-    this._handlePasswordChange = this._handlePasswordChange.bind(this);
 
-    this._register = this._register.bind(this);
-  }
-
+  @action.bound
   _handleUsernameChange(event) {
-    this.setState({username: event.target.value});
+    this.componentState.username = event.target.value;
   }
 
+  @action.bound
   _handlePasswordChange(event) {
-    this.setState({password: event.target.value});
+    this.componentState.password = event.target.value;
   }
+
+  @action.bound
   _register() {
     register(
       this.componentState,

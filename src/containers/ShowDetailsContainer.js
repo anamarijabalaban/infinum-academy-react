@@ -8,8 +8,8 @@ import state from '../state';
 import {getById, getAllEpisodesByShowId} from '../services/show';
 import getImage from '../imagesImports';
 import {VoteComponent} from '../components/VoteComponent';
-import {Link}  from 'react-router-dom';
-import { observable } from 'mobx';
+import {Link, Redirect}  from 'react-router-dom';
+import { observable, action } from 'mobx';
 
 
 const showsDiv = css`
@@ -22,7 +22,7 @@ const container2 = css`
   grid-auto-rows: 50px;
   grid-gap: 10px 5px;
   grid-template-rows: 50px auto 50px;
-  font-family: Arial, Helvetica, sans-serif;;
+  font-family: Arial, Helvetica, sans-serif;
 `;
 
 const contentBox = css`
@@ -152,19 +152,16 @@ const transparentHeartBox=css`
 export class ShowDetailsContainer extends Component {
   @observable
   componentState = {
-    favorite: false
-  }
-  constructor(props) {
-    super(props);
-    this._setFavorite = this._setFavorite.bind(this);
+    favorite: false,
+    liked: false
   }
 
+  @action.bound
   _setFavorite(event){
     let favorites = localStorage.getItem('favorites');
     if (!favorites){
       localStorage.setItem('favorites', `${state.show._id} `);
     }else{
-      console.log('list1:',favorites);
       if (favorites.includes(`${state.show._id}`)){
         favorites=favorites.replace(new RegExp(`${state.show._id}`, 'g'), '');
         localStorage.setItem('favorites', `${favorites.trim()}`);
@@ -183,18 +180,26 @@ export class ShowDetailsContainer extends Component {
   }
 
   render(){
+    console.log(localStorage);
+    if (localStorage.getItem('remember')==='false') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('name');
+      localStorage.removeItem('remember');
+      return <Redirect to='/login'/>;
+    }
     const image = getImage(state.show.title);
     const props = {
       show: state.show,
       black: ''
-    }
+    };
+    console.log(this.props);
     return (
       <div className={container2}>
         <Header/>
         <div className={contentBox}>
           <div className={backBox}>
             <Link className={showLink} to={`/shows`}>
-              <img calssName={goBackImg} alt='Go back' src={getImage('goBack')} />
+              <img className={goBackImg} alt='Go back' src={getImage('goBack')} />
             </Link>
           </div>
           <div className={descBox}>
@@ -205,12 +210,12 @@ export class ShowDetailsContainer extends Component {
             <p>{state.show.description}</p>
           </div>
           <div className={episodesBox}>
-          <p className={episodeBoxTitle}>SEASONS AND EPISODES</p>
-          {
-            state.episodes.length
-              ? state.episodes.map((episode) => <EpisodeComponent episode={episode}/>)
-              : 'No episodes'
-          }
+            <p className={episodeBoxTitle}>SEASONS AND EPISODES</p>
+            {
+              state.episodes.length
+                ? state.episodes.map((episode) => <Link to={`/episodes/${episode._id}`}><EpisodeComponent episode={episode}/></Link>)
+                : 'No episodes'
+            }
           </div>
           <div className={imgBox}>
             <div className={topImageBox}>

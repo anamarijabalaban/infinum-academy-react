@@ -5,8 +5,9 @@ import { css } from 'emotion';
 import {Footer} from '../components/Footer';
 import {Header} from '../components/Header';
 import state from '../state';
-import { getAll as getAllShows,getAllFavorites } from '../services/show';
+import { getAll as getAllShows, getAllFavorites} from '../services/show';
 import { observable } from 'mobx';
+import {Redirect}  from 'react-router-dom';
 
 const container2 = css`
   display: grid;
@@ -33,9 +34,7 @@ export class ShowContainer extends Component {
   componentState = {
     favorites: []
   }
-  constructor(props) {
-    super(props);
-  }
+
   componentDidMount(){
     getAllShows(state);
     if (localStorage.getItem('favorites')){
@@ -44,9 +43,11 @@ export class ShowContainer extends Component {
 
   }
 
+
   render(){
     const favoritesStr=localStorage.getItem('favorites');
     const list = favoritesStr ? favoritesStr.trim().split(' '): [];
+
     return (
       <div className={container2}>
         <Header/>
@@ -54,7 +55,7 @@ export class ShowContainer extends Component {
         {
           favoritesStr ?
             <h3 className={titleBox}>My favorites</h3>
-          :''  
+          :''
 
         }
 

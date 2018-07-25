@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {css} from 'emotion';
 import {Link, Redirect}  from 'react-router-dom';
 import getImage from '../imagesImports';
-import { observable } from 'mobx';
+import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
 import {login} from '../services/user'
 
@@ -109,38 +109,36 @@ export class LoginContainer extends Component {
     password: '',
     redirect: false,
     remember: false,
-    inputType: 'password'
-  }
-  constructor(props) {
-    super(props);
-    this._handleUsernameChange = this._handleUsernameChange.bind(this);
-    this._handlePasswordChange = this._handlePasswordChange.bind(this);
-    this._handleInputChange = this._handleInputChange.bind(this);
-
-    this._handleMouseOverEye = this._handleMouseOverEye.bind(this);
-    this._handleMouseOutEye = this._handleMouseOutEye.bind(this);
-    this._login = this._login.bind(this);
+    inputType: 'password',
+    login:false
   }
 
+  @action.bound
   _handleMouseOverEye(event){
     this.componentState.inputType = 'text';
   }
 
+  @action.bound
   _handleMouseOutEye(event){
     this.componentState.inputType = 'password';
   }
 
+  @action.bound
   _handleUsernameChange(event) {
     this.componentState.username = event.target.value;
   }
 
+  @action.bound
   _handleInputChange(event) {
     this.componentState.remember = event.target.value;
   }
 
+  @action.bound
   _handlePasswordChange(event) {
     this.componentState.password = event.target.value;
   }
+
+  @action.bound
   _login() {
     login(
       this.componentState,
@@ -149,10 +147,12 @@ export class LoginContainer extends Component {
         password: this.componentState.password
       })
     );
-
+    this.componentState.login = true;
   }
+
   render() {
-     if (this.componentState.redirect) {
+    console.log('lalal: ',localStorage.getItem('token'));
+     if (localStorage.getItem('token')) {
        return <Redirect to='/shows'/>;
      }
     return (
@@ -178,7 +178,7 @@ export class LoginContainer extends Component {
           <label>Still don&#39;t have an account? </label>
           <Link className={regLink}  to={`/register`}>Register</Link>
         </span>
-
+        {this.componentState.login}
 
       </div>
     );

@@ -3,6 +3,8 @@ import {Link}  from 'react-router-dom';
 import { css } from 'emotion';
 import getImage from '../imagesImports';
 import {like, dislike} from '../services/show';
+import { observable, action} from 'mobx';
+import { observer } from 'mobx-react';
 import state from '../state';
 
 const likeShowBox=css`
@@ -29,23 +31,39 @@ const votesBox=css`
   justify-content: space-between;
   width: 100px;
 `;
-
+@observer
 export class VoteComponent extends Component {
+  @observable
+  componentState = {
+    likesCount: 0,
+  };
 
+  @action.bound
+  _like(show){
+    this.componentState.likesCount++;
+    console.log(this.componentState);
+    like(this.componentState, show._id);
+  }
+
+  @action.bound
+  _dislike(show){
+    this.componentState.likesCount--;
+    dislike(this.componentState, show._id);
+  }
+
+  @action
   render(){
-    console.log(this.props);
+    console.log('render');
     const {show} = this.props;
     return (
       <div className={votesBox}>
-        <button className={likeShowBox} onClick={()=> like(state, show._id)}>
+        <button className={likeShowBox} onClick={()=> this._like(show)}>
           <img className={inlineBox} alt='Like' src={getImage(`thumbUp${this.props.black}`)} />
-          <p className={inlineBox}>{show.likesCount}</p>
         </button>
-
-        <button className={likeShowBox} onClick={()=> dislike(state, show._id)}>
+        <button className={likeShowBox} onClick={()=> this._dislike(show)}>
           <img className={inlineBox} alt='DisLike' src={getImage(`thumbDown${this.props.black}`)} />
-          <p className={inlineBox}>{show.likesCount}</p>
         </button>
+        <p className={inlineBox}>{this.componentState.likesCount}</p>
       </div>
     );
   }

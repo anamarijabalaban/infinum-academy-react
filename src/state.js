@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, computed } from 'mobx';
 
 class State {
   @observable
@@ -12,6 +12,11 @@ class State {
 
   @observable
   users = [];
+
+  @computed
+  get currentUser() {
+    return localStorage.getItem('name');
+  }
 
 }
 
