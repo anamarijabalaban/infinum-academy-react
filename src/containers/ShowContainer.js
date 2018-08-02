@@ -7,7 +7,6 @@ import {Header} from '../components/Header';
 import state from '../state';
 import { getAll as getAllShows, getAllFavorites} from '../services/show';
 import { observable } from 'mobx';
-import {Redirect}  from 'react-router-dom';
 
 const container2 = css`
   display: grid;
@@ -46,8 +45,7 @@ export class ShowContainer extends Component {
 
   render(){
     const favoritesStr=localStorage.getItem('favorites');
-    const list = favoritesStr ? favoritesStr.trim().split(' '): [];
-
+    console.log(favoritesStr);
     return (
       <div className={container2}>
         <Header/>

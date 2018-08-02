@@ -7,14 +7,9 @@ import {Header} from '../components/Header';
 import state from '../state';
 import {getById, getAllEpisodesByShowId} from '../services/show';
 import getImage from '../imagesImports';
-import {VoteComponent} from '../components/VoteComponent';
 import {Link, Redirect}  from 'react-router-dom';
 import { observable, action } from 'mobx';
-
-
-const showsDiv = css`
-  margin: 0 400px;
-`;
+import {like, dislike} from '../services/show';
 
 const container2 = css`
   display: grid;
@@ -54,11 +49,6 @@ const episodesBox = css`
 
 const imgBox = css`
   grid-row: 2 / 4;
-  grid-column: 3 / 4;
-`;
-
-const linksBox = css`
-  grid-row: 4 / 5;
   grid-column: 3 / 4;
 `;
 
@@ -148,34 +138,74 @@ const transparentHeartBox=css`
   background-color: #d0a9a9;
 `;
 
+const likeShowBox=css`
+  border: 1px solid #A0A0A0;
+  border-radius: 15px;
+  align-items: center;
+  display: inline-flex;
+  justify-content: space-around;
+  width: 45%;
+  text-decoration: none;
+  color: black;
+`;
+
+const inlineBox=css`
+  display: inline-block;
+  margin: 0;
+  padding:0;
+  width: 25px;
+`;
+
+const votesBox=css`
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100px;
+`;
+
 @observer
 export class ShowDetailsContainer extends Component {
   @observable
   componentState = {
     favorite: false,
-    liked: false
+    liked: false,
+    show: {}
   }
 
   @action.bound
   _setFavorite(event){
     let favorites = localStorage.getItem('favorites');
     if (!favorites){
-      localStorage.setItem('favorites', `${state.show._id} `);
+      localStorage.setItem('favorites', `${this.componentState.show._id} `);
     }else{
-      if (favorites.includes(`${state.show._id}`)){
-        favorites=favorites.replace(new RegExp(`${state.show._id}`, 'g'), '');
+      if (favorites.includes(`${this.componentState.show._id}`)){
+        favorites=favorites.replace(new RegExp(`${this.componentState.show._id}`, 'g'), '');
         localStorage.setItem('favorites', `${favorites.trim()}`);
       }else{
-        localStorage.setItem('favorites', `${favorites.trim()} ${state.show._id}`);
+        localStorage.setItem('favorites', `${favorites.trim()} ${this.componentState.show._id}`);
       }
     }
     this.componentState.favorite = !this.componentState.favorite;
 
   }
 
+  @action.bound
+  _like(){
+    like(this.componentState);
+    this.componentState.liked = true;
+  }
+
+  @action.bound
+  _dislike(){
+    dislike(this.componentState);
+    this.componentState.liked = true;
+  }
+
+  @action
   componentDidMount(){
+    console.log('asd');
     const { showId } = this.props.match.params;
-    getById(state, showId)
+    getById(this.componentState, showId)
     getAllEpisodesByShowId(state, showId)
   }
 
@@ -187,12 +217,9 @@ export class ShowDetailsContainer extends Component {
       localStorage.removeItem('remember');
       return <Redirect to='/login'/>;
     }
-    const image = getImage(state.show.title);
-    const props = {
-      show: state.show,
-      black: ''
-    };
-    console.log(this.props);
+    console.log('show',this.componentState.show);
+    const image = `https://api.infinum.academy${this.componentState.show.imageUrl}`;
+
     return (
       <div className={container2}>
         <Header/>
@@ -204,10 +231,18 @@ export class ShowDetailsContainer extends Component {
           </div>
           <div className={descBox}>
             <div className={titleRowBox}>
-              <p className={showTitle}>{state.show.title}</p>
-              <VoteComponent {...props}/>
+              <p className={showTitle}>{this.componentState.show.title}</p>
+              <div className={votesBox}>
+                <button className={likeShowBox} onClick={this._like}>
+                  <img className={inlineBox} alt='Like' src={getImage(`thumbUp`)} />
+                </button>
+                <button className={likeShowBox} onClick={this._dislike}>
+                  <img className={inlineBox} alt='DisLike' src={getImage(`thumbDown`)} />
+                </button>
+                <p className={inlineBox}>{this.componentState.show.likesCount}</p>
+              </div>
             </div>
-            <p>{state.show.description}</p>
+            <p>{this.componentState.show.description}</p>
           </div>
           <div className={episodesBox}>
             <p className={episodeBoxTitle}>SEASONS AND EPISODES</p>
@@ -231,7 +266,7 @@ export class ShowDetailsContainer extends Component {
               </button>
             </div>
             <div className={imgShowDiv}>
-              <img className={showImg} alt={`${state.show.title}`} src={image} />
+              <img className={showImg} alt={`${this.componentState.show.title}`} src={image} />
               <div>
                 <Link to=''>Official Website</Link>
               </div>

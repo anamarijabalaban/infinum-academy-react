@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {css} from 'emotion';
-import {Link, Redirect}  from 'react-router-dom';
+import {Link}  from 'react-router-dom';
 import getImage from '../imagesImports';
 import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
@@ -145,16 +145,13 @@ export class LoginContainer extends Component {
       JSON.stringify({
         email: this.componentState.username,
         password: this.componentState.password
-      })
+      }),
+      this.props
     );
     this.componentState.login = true;
   }
 
   render() {
-    console.log('lalal: ',localStorage.getItem('token'));
-     if (localStorage.getItem('token')) {
-       return <Redirect to='/shows'/>;
-     }
     return (
       <div className={container}>
         <div className={iconBox}>
