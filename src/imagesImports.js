@@ -12,6 +12,10 @@ import Plus from './images/plus.png';
 import GoBack from './images/go-back.png';
 import Heart from './images/heart.png';
 import User from './images/img-placeholder-user3.png';
+import Photo from './images/photo.png';
+import Close from './images/close.png';
+import NoImage from './images/no-image.png';
+import Loader from './images/loader.gif';
 
 const imgs = {
     'logo': ShowsLogo,
@@ -27,7 +31,11 @@ const imgs = {
     'plus': Plus,
     'goBack': GoBack,
     'heart': Heart,
-    'user': User
+    'user': User,
+    'close': Close,
+    'photo': Photo,
+    'noImage': NoImage,
+    'loader': Loader
 };
 
 const getImage = (key) => imgs[key];

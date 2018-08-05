@@ -3,6 +3,7 @@ import { runInAction } from 'mobx';
 
 export async function comment(state, data) {
   const comment = await post(`comments`, data);
+  console.log(comment);
   runInAction(() => {
     state.comments.push(comment.data);
   });

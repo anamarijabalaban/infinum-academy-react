@@ -29,7 +29,7 @@ const contentBox = css`
   grid-template-columns: 1fr 1fr 1fr;
   grid-column-gap: 30px;
   grid-row-gap: 10px;
-
+  position: relative;
 `;
 
 const backBox = css`
@@ -163,17 +163,24 @@ const votesBox=css`
   width: 100px;
 `;
 
+const episodeLink = css`{
+  text-decoration: none;
+
+
+}`;
+
 @observer
 export class ShowDetailsContainer extends Component {
   @observable
   componentState = {
     favorite: false,
-    liked: false,
     show: {}
   }
 
   @action.bound
-  _setFavorite(event){
+  _setFavorite(){
+    console.log('jhkjhkj',this.componentState.favorite);
+    this.componentState.favorite = !this.componentState.favorite;
     let favorites = localStorage.getItem('favorites');
     if (!favorites){
       localStorage.setItem('favorites', `${this.componentState.show._id} `);
@@ -185,20 +192,17 @@ export class ShowDetailsContainer extends Component {
         localStorage.setItem('favorites', `${favorites.trim()} ${this.componentState.show._id}`);
       }
     }
-    this.componentState.favorite = !this.componentState.favorite;
+
 
   }
 
   @action.bound
   _like(){
     like(this.componentState);
-    this.componentState.liked = true;
   }
-
   @action.bound
   _dislike(){
     dislike(this.componentState);
-    this.componentState.liked = true;
   }
 
   @action
@@ -219,7 +223,8 @@ export class ShowDetailsContainer extends Component {
     }
     console.log('show',this.componentState.show);
     const image = `https://api.infinum.academy${this.componentState.show.imageUrl}`;
-
+    console.log(localStorage.getItem('favorites'));
+    console.log(localStorage.getItem('favorites').search('abc'));
     return (
       <div className={container2}>
         <Header/>
@@ -240,25 +245,26 @@ export class ShowDetailsContainer extends Component {
                   <img className={inlineBox} alt='DisLike' src={getImage(`thumbDown`)} />
                 </button>
                 <p className={inlineBox}>{this.componentState.show.likesCount}</p>
+
               </div>
             </div>
             <p>{this.componentState.show.description}</p>
           </div>
           <div className={episodesBox}>
-            <p className={episodeBoxTitle}>SEASONS AND EPISODES</p>
+            <p className={episodeBoxTitle}>SEASONS AND EPISODES </p>
             {
               state.episodes.length
-                ? state.episodes.map((episode) => <Link to={`/episodes/${episode._id}`}><EpisodeComponent episode={episode}/></Link>)
+                ? state.episodes.map((episode) => <Link to={`/episodes/${episode._id}`} className={episodeLink}><EpisodeComponent episode={episode}/></Link>)
                 : 'No episodes'
             }
           </div>
           <div className={imgBox}>
             <div className={topImageBox}>
-              <Link className = {plusBox} to=''>
+              <Link className = {plusBox} to={`/shows/${this.componentState.show._id}/episode/new`}>
                 <img className={plusImg} alt='New episode' src={getImage('plus')} />
                 <div>New episode</div>
               </Link>
-              <button className = {this.componentState.favorite ? transparentHeartBox: heartBox} onClick={this._setFavorite} disable='true' >
+              <button className = {localStorage.getItem('favorites').search(this.componentState.show._id)===-1 ? heartBox: transparentHeartBox} onClick={this._setFavorite} disable='true' >
 
                   <img className={heartImg} alt='Favorite' src={getImage('heart')} />
                   <div>Favorite</div>
@@ -269,6 +275,7 @@ export class ShowDetailsContainer extends Component {
               <img className={showImg} alt={`${this.componentState.show.title}`} src={image} />
               <div>
                 <Link to=''>Official Website</Link>
+                      <p>{this.componentState.favorite}</p>
               </div>
               <div>
                 <Link to=''>Wikipedia</Link>
@@ -279,6 +286,7 @@ export class ShowDetailsContainer extends Component {
             </div>
           </div>
         </div>
+
         <Footer/>
       </div>
     );

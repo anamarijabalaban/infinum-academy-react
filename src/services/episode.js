@@ -1,4 +1,4 @@
-import { get, post } from './api';
+import { get, postJSON } from './api';
 import { runInAction } from 'mobx';
 
 export async function getById(state, id) {
@@ -16,8 +16,15 @@ export async function getAllCommentsByEpisodeId(state, id) {
 }
 
 export async function comment(state, data) {
-  const comment = await post(`comments`, data);
+  const comment = await postJSON(`comments`, data);
   runInAction(() => {
     state.comments.push(comment.data);
+  });
+}
+
+export async function add(state, data) {
+  const episode = await postJSON(`episodes`, data);
+  runInAction(() => {
+    state.episodes.push(episode.data);
   });
 }

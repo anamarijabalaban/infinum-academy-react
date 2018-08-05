@@ -9,6 +9,18 @@ export function post(model, data ={}) {
   return fetch(`https://api.infinum.academy/api/${model}`    , {
       method: 'POST',
       headers: {
+        'Authorization': `${localStorage.getItem('token')}`
+      },
+      body: data
+    })
+    .then((response) => response.json());
+}
+
+export function postJSON(model, data ={}) {
+  console.log(localStorage.getItem('token'));
+  return fetch(`https://api.infinum.academy/api/${model}`    , {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': `${localStorage.getItem('token')}`
       },

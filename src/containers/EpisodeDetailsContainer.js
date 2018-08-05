@@ -137,7 +137,11 @@ export class EpisodeDetailsContainer extends Component {
         <Header/>
         <div className={contentBox}>
           <div className={imgBox}>
-            <img alt='Episode' className={imgEpisode} src={`https://api.infinum.academy${this.componentState.episode.imageUrl}`}/>
+            {
+              this.componentState.episode.imageUrl === ''
+              ? <img alt='Episode' className={imgEpisode} src={getImage('noImage')}/>
+              : <img alt='Episode' className={imgEpisode} src={`https://api.infinum.academy${this.componentState.episode.imageUrl}`}/>
+            }
             <Link to={`/shows`} className={goBackLink}>
               <img  alt='Go back' src={getImage('goBack')} />
             </Link>
