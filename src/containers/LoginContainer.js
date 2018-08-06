@@ -97,7 +97,7 @@ const eyeBox= css`
 `;
 
 const eyeImg= css`
-  width: 15%;
+  width: 50px;
 `;
 @observer
 export class LoginContainer extends Component {

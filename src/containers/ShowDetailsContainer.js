@@ -97,7 +97,10 @@ const heartBox=css`
   border-radius: 20px;
   padding: 3px;
   text-decoration: none;
-  width: 50%;
+  width: 110px;
+  &:visited{
+    color: black;
+  }
 `;
 
 const plusImg=css`
@@ -128,9 +131,13 @@ const transparentHeartBox=css`
   border: 1px solid #A0A0A0;
   border-radius: 20px;
   padding: 3px;
+
   text-decoration: none;
   background-color: #d0a9a9;
-  width: 50%;
+  width: 110px;
+  &:visited{
+    color: black;
+  }
 `;
 
 const likeShowBox=css`
