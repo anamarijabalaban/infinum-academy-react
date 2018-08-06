@@ -39,7 +39,7 @@ export class Modal extends Component {
         <button
           className={button}
           onClick={this.props.close}
-        ><img className={closeImg} alt='Photo' src={getImage(`close`)} /></button>
+        ><img className={closeImg} alt='Close' src={getImage(`close`)} /></button>
       </div>
     );
   }

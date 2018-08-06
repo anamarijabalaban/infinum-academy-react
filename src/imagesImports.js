@@ -14,7 +14,7 @@ import Heart from './images/heart.png';
 import User from './images/img-placeholder-user3.png';
 import Photo from './images/photo.png';
 import Close from './images/close.png';
-import NoImage from './images/no-image.png';
+import NoImage from './images/icons8-picture-512.png';
 import Loader from './images/loader.gif';
 
 const imgs = {

@@ -10,6 +10,7 @@ import {CommentComponent} from '../components/CommentComponent';
 import {Link}  from 'react-router-dom';
 import {deleteComment} from '../services/comment';
 import { observable, action } from 'mobx';
+import {Redirect}  from 'react-router-dom';
 
 const container2 = css`
   display: grid;
@@ -131,6 +132,9 @@ export class EpisodeDetailsContainer extends Component {
   }
 
   render(){
+    if (!localStorage.getItem('name')) {
+      return <Redirect to='/login'/>;
+    }
     console.log(this.componentState.comments,this.componentState.comments.length, state);
     return (
       <div className={container2}>
@@ -146,8 +150,6 @@ export class EpisodeDetailsContainer extends Component {
               <img  alt='Go back' src={getImage('goBack')} />
             </Link>
           </div>
-
-
           <div className={descBox}>
             <p className={showTitle}>{this.componentState.episode.title}</p>
             <p>{this.componentState.episode.description}</p>

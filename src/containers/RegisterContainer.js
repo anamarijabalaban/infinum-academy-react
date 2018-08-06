@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {css} from 'emotion';
-import {Redirect}  from 'react-router-dom';
 import getImage from '../imagesImports';
 import {register} from '../services/user'
 import { observable, action } from 'mobx';
@@ -80,10 +79,16 @@ export class RegisterContainer extends Component {
   @observable
   componentState = {
     username: '',
-    password: '',
-    redirect: false
+    password: ''
   }
 
+  @action.bound
+  _onInputChange(fieldName) {
+    return action((event) => {
+      const value = event.target.value;
+      this.componentState[fieldName] = value;
+    });
+  }
   @action.bound
   _handleUsernameChange(event) {
     this.componentState.username = event.target.value;
@@ -95,7 +100,8 @@ export class RegisterContainer extends Component {
   }
 
   @action.bound
-  _register() {
+  _register(event) {
+    event.preventDefault();
     register(
       this.componentState,
       JSON.stringify({
@@ -104,29 +110,25 @@ export class RegisterContainer extends Component {
       })
     )
     .then((data) => {
-      this.setState({ redirect: true });
+      this.props.history.push('./login');
     });
   }
 
   render() {
-
-     if (this.componentState.redirect) {
-       return <Redirect to='/login'/>;
-     }
     return (
-      <div className={container}>
-        <div className={iconBox}>
-          <img className={iconImg} alt='App icon' src={getImage('logo')} />
+      <form onSubmit={this._register}>
+        <div className={container}>
+          <div className={iconBox}>
+            <img className={iconImg} alt='App icon' src={getImage('logo')} />
+          </div>
+          <div className={blankBox}></div>
+          <label className={usernameLabBox} htmlFor="username">Username:</label>
+          <input className={usernameBox} type="text" id="username" value={this.componentState.username} onChange={this._onInputChange('username')}/>
+          <label className={passwordLabBox} htmlFor="password">Password:</label>
+          <input className={passwordBox} type="password" id="password" value={this.componentState.password} onChange={this._onInputChange('password')}/>
+          <button type='submit' className={loginBtnBox} onClick={this._register}>REGISTER</button>
         </div>
-        <div className={blankBox}></div>
-        <label className={usernameLabBox} htmlFor="username">Username:</label>
-        <input className={usernameBox} type="text" id="username" value={this.componentState.username} onChange={this._handleUsernameChange}/>
-        <label className={passwordLabBox} htmlFor="password">Password:</label>
-        <input className={passwordBox} type="password" id="password" value={this.componentState.password} onChange={this._handlePasswordChange}/>
-
-        <button className={loginBtnBox} onClick={this._register}>REGISTER</button>
-
-      </div>
+      </form>
     );
   }
 }

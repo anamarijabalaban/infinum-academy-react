@@ -9,6 +9,7 @@ import state from '../state';
 import { observable, action } from 'mobx';
 import {uploadFile} from '../services/media';
 import {add} from '../services/episode';
+import {Redirect}  from 'react-router-dom';
 
 const modalParent = css`
   position: fixed;
@@ -111,6 +112,7 @@ const uploadImg = css`{
    font-size: 20px;
    border-radius: 5px;
    margin-top: 10px;
+
  }`;
 
  const loadingImg = css`{
@@ -142,15 +144,16 @@ export class NewEpisodeModal extends Component {
     mediaId: ''
   }
 
-
   @action.bound
-  _onDescChange(event){
-    this.componentState.episodeDesc = event.target.value;
-  }
-
-  @action.bound
-  _onTitleChange(event){
-    this.componentState.episodeTitle = event.target.value;
+  _onInputChange(fieldName, fieldValue = 'value') {
+    return action((event) => {
+      if (event.value !== undefined) {
+        this.componentState[fieldName] = event.value;
+      }else{
+        const value = event.target[fieldValue];
+        this.componentState[fieldName] = value;
+      }
+    });
   }
 
   @action.bound
@@ -165,18 +168,6 @@ export class NewEpisodeModal extends Component {
     data.append('file', files[0]);
     this.componentState.loading = true;
     uploadFile(this.componentState,data);
-  }
-
-  @action.bound
-  _seassonChange(selectedSeason){
-    this.componentState.selectedSeason =  selectedSeason.value;
-    console.log(`Option selected:`, this.componentState.selectedSeason);
-  }
-
-  @action.bound
-  _episodeChange(selectedEpisode){
-    this.componentState.selectedEpisode =  selectedEpisode.value;
-    console.log(`Option selected:`, this.componentState.selectedEpisode);
   }
 
   @action.bound
@@ -196,12 +187,13 @@ export class NewEpisodeModal extends Component {
   }
 
   render() {
-
+    if (!localStorage.getItem('name')) {
+      return <Redirect to='/login'/>;
+    }
     return (
       <div className={modalParent}>
       <form onSubmit={this._submitForm}>
         <Modal className={main} width="30%" height='600px' close={this._closeModal} >
-
             <h1>Add new episode</h1>
             <Dropzone className={dropzone} onDrop={this._onDrop}>
               <div className={dropzoneText}>
@@ -211,7 +203,7 @@ export class NewEpisodeModal extends Component {
                   : this.componentState.uploadedImage ===''
                     ?
                       <div>
-                        <img className={photoImg} alt='Photo' src={getImage(`photo`)} />
+                        <img className={photoImg} alt='Uploaded file' src={getImage(`photo`)} />
                         <div> Drag your image here or browse</div>
                       </div>
                     :
@@ -220,32 +212,30 @@ export class NewEpisodeModal extends Component {
                         <div> Change Photo</div>
                       </div>
                 }
-
               </div>
             </Dropzone>
-            <input className={inputBox} type='text' placeholder='Episode title' value={this.componentState.episodeTitle} onChange={this._onTitleChange}/>
+            <input className={inputBox} type='text' placeholder='Episode title' value={this.componentState.episodeTitle} onChange={this._onInputChange('episodeTitle')}/>
             <div className={cx(selectBorder, inputBox)}>
               <div className = {selectDiv}>
                 <label> Season: </label>
                 <Select
                   className ={selectBox}
                   defaultValue={options[1]}
-                  onChange={this._seassonChange}
+                  onChange={this._onInputChange('selectedSeason')}
                   options={options}
                 />
               </div>
-
               <div className={selectDiv}>
                 <label> Episode: </label>
                 <Select
                   className ={selectBox}
                   defaultValue={options[1]}
-                  onChange={this._episodeChange}
+                  onChange={this._onInputChange('selectedEpisode')}
                   options={options}
                 />
               </div>
             </div>
-            <input className={inputBox} type='text' placeholder='Episode description' value={this.componentState.episodeDesc} onChange={this._onDescChange}/>
+            <input className={inputBox} type='text' placeholder='Episode description' value={this.componentState.episodeDesc} onChange={this._onInputChange('episodeDesc')}/>
             <button type="submit" className={this.componentState.uploadedImage==='' ? newBtn: newEnabledBtn}>ADD NEW EPISODE</button>
 
        </Modal>

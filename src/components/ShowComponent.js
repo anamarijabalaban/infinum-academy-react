@@ -1,6 +1,7 @@
 import React, { Component} from 'react';
 import {Link}  from 'react-router-dom';
 import { css } from 'emotion';
+import getImage from '../imagesImports';
 
 const showLi = css`
   font-size: 20px;
@@ -26,7 +27,12 @@ export class ShowComponent extends Component {
     return (
       <li className = {showLi}>
         <Link className={showLink} to={`/shows/${show._id}`}>
-          <img className={showImg}  alt={`${show.title}`} src={image} />
+          {
+            show.imageUrl === ''
+            ? <img className={showImg} alt='Show' src={getImage(`noImage`)} />
+            : <img className={showImg}  alt={`${show.title}`} src={image} />
+          }
+
           <p>{show.title}</p>
         </Link>
       </li>

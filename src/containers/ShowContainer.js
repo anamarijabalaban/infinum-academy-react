@@ -7,6 +7,7 @@ import {Header} from '../components/Header';
 import state from '../state';
 import { getAll as getAllShows, getAllFavorites} from '../services/show';
 import { observable } from 'mobx';
+import {Redirect}  from 'react-router-dom';
 
 const container2 = css`
   display: grid;
@@ -39,24 +40,22 @@ export class ShowContainer extends Component {
     if (localStorage.getItem('favorites')){
       getAllFavorites(this.componentState,localStorage.getItem('favorites').trim().split(' ') );
     }
-
   }
 
-
   render(){
+    if (!localStorage.getItem('name')) {
+      return <Redirect to='/login'/>;
+    }
     const favoritesStr=localStorage.getItem('favorites');
-    console.log(favoritesStr);
     return (
       <div className={container2}>
         <Header/>
         <div className={contentBox}>
-        {
-          favoritesStr ?
-            <h3 className={titleBox}>My favorites</h3>
-          :''
-
-        }
-
+          {
+            favoritesStr ?
+              <h3 className={titleBox}>My favorites</h3>
+            :''
+          }
           <ul>
           {
               this.componentState.favorites.map((show) => <ShowComponent show={show}/>)

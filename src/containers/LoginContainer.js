@@ -99,18 +99,14 @@ const eyeBox= css`
 const eyeImg= css`
   width: 15%;
 `;
-
-
 @observer
 export class LoginContainer extends Component {
   @observable
   componentState = {
     username: '',
     password: '',
-    redirect: false,
     remember: false,
-    inputType: 'password',
-    login:false
+    inputType: 'password'
   }
 
   @action.bound
@@ -124,22 +120,16 @@ export class LoginContainer extends Component {
   }
 
   @action.bound
-  _handleUsernameChange(event) {
-    this.componentState.username = event.target.value;
+  _onInputChange(fieldName) {
+    return action((event) => {
+      const value = event.target.value;
+      this.componentState[fieldName] = value;
+    });
   }
 
   @action.bound
-  _handleInputChange(event) {
-    this.componentState.remember = event.target.value;
-  }
-
-  @action.bound
-  _handlePasswordChange(event) {
-    this.componentState.password = event.target.value;
-  }
-
-  @action.bound
-  _login() {
+  _login(event) {
+    event.preventDefault();
     login(
       this.componentState,
       JSON.stringify({
@@ -148,36 +138,33 @@ export class LoginContainer extends Component {
       }),
       this.props
     );
-    this.componentState.login = true;
   }
 
   render() {
     return (
-      <div className={container}>
-        <div className={iconBox}>
-          <img className={iconImg} alt='App icon' src={getImage('logo')} />
+      <form onSubmit={this._login}>
+        <div className={container}>
+          <div className={iconBox}>
+            <img className={iconImg} alt='App icon' src={getImage('logo')} />
+          </div>
+          <div className={blankBox}></div>
+          <label className={usernameLabBox} htmlFor="username">My username is:</label>
+          <input className={usernameBox} type="text" id="username" value={this.componentState.username} onChange={this._onInputChange('username')}/>
+          <label className={passwordLabBox} htmlFor="password">and my password is:</label>
+          <input className={passwordBox} type={this.componentState.inputType} id="password" value={this.componentState.password} onChange={this._onInputChange('password')}/>
+          <span className={eyeBox}>
+            <img className={eyeImg} alt='Show password text' src={getImage('passEye')} onMouseOver={this._handleMouseOverEye} onMouseOut={this._handleMouseOutEye}/>
+          </span>
+          <div className={rememberBox}>
+              <input name="remember" type="checkbox" onChange={this._onInputChange('remember')} />Remember me
+          </div>
+          <button type='submit' className={loginBtnBox} onClick={this._login}>LOGIN</button>
+          <span className={regSpanBox}>
+            <label>Still don&#39;t have an account? </label>
+            <Link className={regLink}  to={`/register`}>Register</Link>
+          </span>
         </div>
-        <div className={blankBox}></div>
-        <label className={usernameLabBox} htmlFor="username">My username is:</label>
-        <input className={usernameBox} type="text" id="username" value={this.componentState.username} onChange={this._handleUsernameChange}/>
-        <label className={passwordLabBox} htmlFor="password">and my password is:</label>
-        <input className={passwordBox} type={this.componentState.inputType} id="password" value={this.componentState.password} onChange={this._handlePasswordChange}/>
-        <span className={eyeBox}>
-          <img className={eyeImg} alt='Show password text' src={getImage('passEye')} onMouseOver={this._handleMouseOverEye} onMouseOut={this._handleMouseOutEye}/>
-        </span>
-        <div className={rememberBox}>
-            <input name="remember" type="checkbox" onChange={this._handleInputChange} />Remember me
-        </div>
-
-        <button className={loginBtnBox} onClick={this._login}>LOGIN</button>
-
-        <span className={regSpanBox}>
-          <label>Still don&#39;t have an account? </label>
-          <Link className={regLink}  to={`/register`}>Register</Link>
-        </span>
-        {this.componentState.login}
-
-      </div>
+      </form>
     );
   }
 }

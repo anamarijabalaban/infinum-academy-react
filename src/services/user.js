@@ -1,11 +1,7 @@
 import { postJSON } from './api';
-import { runInAction } from 'mobx';
 
 export async function register(state, data) {
   await postJSON('users', data);
-  runInAction(() => {
-    state.redirect = true;
-  });
 }
 
 
@@ -20,8 +16,4 @@ export async function login(state, data, props) {
   } catch(err){
     alert(err);
   }
-  console.log(localStorage);
-  runInAction(() => {
-    state.redirect= true;
-  });
 }

@@ -97,6 +97,7 @@ const heartBox=css`
   border-radius: 20px;
   padding: 3px;
   text-decoration: none;
+  width: 50%;
 `;
 
 const plusImg=css`
@@ -109,13 +110,6 @@ const heartImg=css`
   padding-right: 2px;
 `;
 
-const goBackImg=css`
-
-`;
-
-const showLink=css`
-`;
-
 const imgShowDiv=css`
   padding-top: 1em;
 `;
@@ -123,7 +117,7 @@ const imgShowDiv=css`
 const showImg=css`
   width: 100%;
   padding-bottom: 10px;
-border-bottom: 1px solid #A0A0A0;
+  border-bottom: 1px solid #A0A0A0;
 `;
 
 const transparentHeartBox=css`
@@ -136,6 +130,7 @@ const transparentHeartBox=css`
   padding: 3px;
   text-decoration: none;
   background-color: #d0a9a9;
+  width: 50%;
 `;
 
 const likeShowBox=css`
@@ -165,8 +160,6 @@ const votesBox=css`
 
 const episodeLink = css`{
   text-decoration: none;
-
-
 }`;
 
 @observer
@@ -179,7 +172,6 @@ export class ShowDetailsContainer extends Component {
 
   @action.bound
   _setFavorite(){
-    console.log('jhkjhkj',this.componentState.favorite);
     this.componentState.favorite = !this.componentState.favorite;
     let favorites = localStorage.getItem('favorites');
     if (!favorites){
@@ -192,8 +184,6 @@ export class ShowDetailsContainer extends Component {
         localStorage.setItem('favorites', `${favorites.trim()} ${this.componentState.show._id}`);
       }
     }
-
-
   }
 
   @action.bound
@@ -207,31 +197,29 @@ export class ShowDetailsContainer extends Component {
 
   @action
   componentDidMount(){
-    console.log('asd');
     const { showId } = this.props.match.params;
     getById(this.componentState, showId)
     getAllEpisodesByShowId(state, showId)
   }
 
   render(){
-    console.log(localStorage);
+    if (!localStorage.getItem('name')) {
+      return <Redirect to='/login'/>;
+    }
     if (localStorage.getItem('remember')==='false') {
       localStorage.removeItem('token');
       localStorage.removeItem('name');
       localStorage.removeItem('remember');
       return <Redirect to='/login'/>;
     }
-    console.log('show',this.componentState.show);
     const image = `https://api.infinum.academy${this.componentState.show.imageUrl}`;
-    console.log(localStorage.getItem('favorites'));
-    console.log(localStorage.getItem('favorites').search('abc'));
     return (
       <div className={container2}>
         <Header/>
         <div className={contentBox}>
           <div className={backBox}>
-            <Link className={showLink} to={`/shows`}>
-              <img className={goBackImg} alt='Go back' src={getImage('goBack')} />
+            <Link to={`/shows`}>
+              <img alt='Go back' src={getImage('goBack')} />
             </Link>
           </div>
           <div className={descBox}>
@@ -264,29 +252,29 @@ export class ShowDetailsContainer extends Component {
                 <img className={plusImg} alt='New episode' src={getImage('plus')} />
                 <div>New episode</div>
               </Link>
-              <button className = {localStorage.getItem('favorites').search(this.componentState.show._id)===-1 ? heartBox: transparentHeartBox} onClick={this._setFavorite} disable='true' >
-
+              <button className = { localStorage.getItem('favorites') && localStorage.getItem('favorites').search(this.componentState.show._id)!==-1
+                                    ? transparentHeartBox
+                                    : heartBox
+                                  } onClick={this._setFavorite}>
                   <img className={heartImg} alt='Favorite' src={getImage('heart')} />
                   <div>Favorite</div>
-
               </button>
             </div>
             <div className={imgShowDiv}>
               <img className={showImg} alt={`${this.componentState.show.title}`} src={image} />
               <div>
                 <Link to=''>Official Website</Link>
-                      <p>{this.componentState.favorite}</p>
               </div>
               <div>
                 <Link to=''>Wikipedia</Link>
               </div>
               <div>
                 <Link to=''>IMDB</Link>
+                <p>{this.componentState.favorite}</p>
               </div>
             </div>
           </div>
         </div>
-
         <Footer/>
       </div>
     );

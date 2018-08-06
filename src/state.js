@@ -10,9 +10,6 @@ class State {
   @observable
   show = [];
 
-  @observable
-  users = [];
-
   @computed
   get currentUser() {
     return localStorage.getItem('name');
