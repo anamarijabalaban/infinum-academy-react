@@ -37,16 +37,17 @@ export class ShowContainer extends Component {
 
   componentDidMount(){
     getAllShows(state);
-    if (localStorage.getItem('favorites')){
-      getAllFavorites(this.componentState,localStorage.getItem('favorites').trim().split(' ') );
+    if (localStorage.getItem(`${localStorage.getItem('name')}-favorites`)){
+      getAllFavorites(this.componentState,localStorage.getItem(`${localStorage.getItem('name')}-favorites`).trim().split(' ') );
     }
   }
 
   render(){
     if (!localStorage.getItem('name')) {
+      console.log(localStorage.getItem('name'));
       return <Redirect to='/login'/>;
     }
-    const favoritesStr=localStorage.getItem('favorites');
+    const favoritesStr=localStorage.getItem(`${localStorage.getItem('name')}-favorites`);
     return (
       <div className={container2}>
         <Header/>

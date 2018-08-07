@@ -126,7 +126,7 @@ export class RegisterContainer extends Component {
           <input className={usernameBox} type="text" id="username" value={this.componentState.username} onChange={this._onInputChange('username')}/>
           <label className={passwordLabBox} htmlFor="password">Password:</label>
           <input className={passwordBox} type="password" id="password" value={this.componentState.password} onChange={this._onInputChange('password')}/>
-          <button type='submit' className={loginBtnBox} onClick={this._register}>REGISTER</button>
+          <button type='submit' className={loginBtnBox}>REGISTER</button>
         </div>
       </form>
     );

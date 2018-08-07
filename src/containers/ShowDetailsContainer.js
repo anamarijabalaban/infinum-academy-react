@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {EpisodeComponent} from '../components/EpisodeComponent'
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import { observer } from 'mobx-react';
 import {Footer} from '../components/Footer';
 import {Header} from '../components/Header';
@@ -123,7 +123,7 @@ const showImg=css`
   border-bottom: 1px solid #A0A0A0;
 `;
 
-const transparentHeartBox=css`
+const redHeartBox=css`
   grid-column: 2/2;
   display: flex;
   align-items: center;
@@ -131,7 +131,6 @@ const transparentHeartBox=css`
   border: 1px solid #A0A0A0;
   border-radius: 20px;
   padding: 3px;
-
   text-decoration: none;
   background-color: #d0a9a9;
   width: 110px;
@@ -169,6 +168,11 @@ const episodeLink = css`{
   text-decoration: none;
 }`;
 
+const transBox = css`{
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}`;
 @observer
 export class ShowDetailsContainer extends Component {
   @observable
@@ -180,15 +184,15 @@ export class ShowDetailsContainer extends Component {
   @action.bound
   _setFavorite(){
     this.componentState.favorite = !this.componentState.favorite;
-    let favorites = localStorage.getItem('favorites');
+    let favorites = localStorage.getItem(`${localStorage.getItem('name')}-favorites`);
     if (!favorites){
-      localStorage.setItem('favorites', `${this.componentState.show._id} `);
+      localStorage.setItem(`${localStorage.getItem('name')}-favorites`, `${this.componentState.show._id} `);
     }else{
       if (favorites.includes(`${this.componentState.show._id}`)){
         favorites=favorites.replace(new RegExp(`${this.componentState.show._id}`, 'g'), '');
-        localStorage.setItem('favorites', `${favorites.trim()}`);
+        localStorage.setItem(`${localStorage.getItem('name')}-favorites`, `${favorites.trim()}`);
       }else{
-        localStorage.setItem('favorites', `${favorites.trim()} ${this.componentState.show._id}`);
+        localStorage.setItem(`${localStorage.getItem('name')}-favorites`, `${favorites.trim()} ${this.componentState.show._id}`);
       }
     }
   }
@@ -196,11 +200,36 @@ export class ShowDetailsContainer extends Component {
   @action.bound
   _like(){
     like(this.componentState);
+    this._saveVote();
   }
   @action.bound
   _dislike(){
     dislike(this.componentState);
+    this._saveVote();
   }
+
+  @action.bound
+  _isFavoriteShow(){
+    return  !(localStorage.getItem(`${localStorage.getItem('name')}-favorites`) &&
+            localStorage.getItem(`${localStorage.getItem('name')}-favorites`).search(this.componentState.show._id)!==-1);
+  }
+
+  @action.bound
+  _canVote(){
+    return  !(localStorage.getItem(`${localStorage.getItem('name')}-votes`) &&
+            localStorage.getItem(`${localStorage.getItem('name')}-votes`).search(this.componentState.show._id)!==-1);
+  }
+
+  @action.bound
+  _saveVote(){
+    let votes = localStorage.getItem(`${localStorage.getItem('name')}-votes`);
+    if (!votes){
+      localStorage.setItem(`${localStorage.getItem('name')}-votes`, `${this.componentState.show._id} `);
+    }else if (!votes.includes(`${this.componentState.show._id}`)){
+      localStorage.setItem(`${localStorage.getItem('name')}-votes`, `${votes.trim()} ${this.componentState.show._id}`);
+    }
+  }
+
 
   @action
   componentDidMount(){
@@ -233,10 +262,10 @@ export class ShowDetailsContainer extends Component {
             <div className={titleRowBox}>
               <p className={showTitle}>{this.componentState.show.title}</p>
               <div className={votesBox}>
-                <button className={likeShowBox} onClick={this._like}>
+                <button className={this._canVote() ? likeShowBox: cx(transBox,likeShowBox)} onClick={this._like}>
                   <img className={inlineBox} alt='Like' src={getImage(`thumbUp`)} />
                 </button>
-                <button className={likeShowBox} onClick={this._dislike}>
+                <button className={this._canVote() ? likeShowBox: cx(transBox,likeShowBox)} onClick={this._dislike}>
                   <img className={inlineBox} alt='DisLike' src={getImage(`thumbDown`)} />
                 </button>
                 <p className={inlineBox}>{this.componentState.show.likesCount}</p>
@@ -259,10 +288,7 @@ export class ShowDetailsContainer extends Component {
                 <img className={plusImg} alt='New episode' src={getImage('plus')} />
                 <div>New episode</div>
               </Link>
-              <button className = { localStorage.getItem('favorites') && localStorage.getItem('favorites').search(this.componentState.show._id)!==-1
-                                    ? transparentHeartBox
-                                    : heartBox
-                                  } onClick={this._setFavorite}>
+              <button className = { this._isFavoriteShow() ? heartBox : redHeartBox} onClick={this._setFavorite}>
                   <img className={heartImg} alt='Favorite' src={getImage('heart')} />
                   <div>Favorite</div>
               </button>

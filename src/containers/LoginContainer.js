@@ -122,6 +122,7 @@ export class LoginContainer extends Component {
   @action.bound
   _onInputChange(fieldName) {
     return action((event) => {
+      console.log(event,event.target.value);
       const value = event.target.value;
       this.componentState[fieldName] = value;
     });
@@ -158,7 +159,7 @@ export class LoginContainer extends Component {
           <div className={rememberBox}>
               <input name="remember" type="checkbox" onChange={this._onInputChange('remember')} />Remember me
           </div>
-          <button type='submit' className={loginBtnBox} onClick={this._login}>LOGIN</button>
+          <button type='submit' className={loginBtnBox}>LOGIN</button>
           <span className={regSpanBox}>
             <label>Still don&#39;t have an account? </label>
             <Link className={regLink}  to={`/register`}>Register</Link>
